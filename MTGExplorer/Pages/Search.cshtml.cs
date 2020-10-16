@@ -1,32 +1,31 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 using MTGExplorer.Models.MTGJson;
 using MTGExplorer.Services;
 
 namespace MTGExplorer.Pages
 {
-    public class IndexModel : PageModel
+    public class SearchModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
         private MTGService _MTGService;
-        public List<Card> Cards;
+        public IEnumerable<Card> Cards;
 
-        public IndexModel(ILogger<IndexModel> logger, MTGService mtgService)
+        public SearchModel(MTGService mtgService)
         {
-            _logger = logger;
             _MTGService = mtgService;
         }
 
-        public void OnGet()
+        public void OnGet(string text)
         {
             var allSets = _MTGService.ReadData();
-            var firstSet = allSets.data.First();
-            Cards = firstSet.Value.cards;
+            Cards = allSets.data.SelectMany(
+                x => x.Value.cards.Where(
+                    y => y.name.Contains(text, StringComparison.OrdinalIgnoreCase)));
         }
     }
 }

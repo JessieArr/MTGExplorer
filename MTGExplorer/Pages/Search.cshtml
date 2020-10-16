@@ -1,0 +1,9 @@
+﻿@page
+@model MTGExplorer.Pages.SearchModel
+@{
+}
+
+@foreach (var card in Model.Cards)
+{
+    <a asp-page="Card" asp-route-uuid="@card.uuid">@card.name</a>
+}
